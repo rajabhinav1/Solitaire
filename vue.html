@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Solitaire</title>
+  <style>
+    /* CSS styling for the Solitaire game */
+    /* Add your own custom styles as needed */
+    
+    //Replace the card image URL format in the getCardImage method with the appropriate image URL based on your card assets.
+
+// Remember to include the Vue.js library by referencing it from a CDN or by downloading it locally.
+    
+    .game-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    
+    .card {
+      width: 100px;
+      height: 150px;
+      border: 1px solid black;
+      background-color: white;
+      margin-right: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+    
+    .card img {
+      max-width: 80%;
+      max-height: 80%;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="game-container">
+      <div v-if="!gameOver">
+        <div v-for="(pile, index) in piles" :key="index">
+          <div class="card" v-for="(card, cardIndex) in pile" :key="cardIndex" @click="handleCardClick(card, index)">
+            <img v-if="card.faceUp" :src="getCardImage(card)" :alt="card.name" />
+          </div>
+        </div>
+      </div>
+      <div v-else>
+        <h2>Game Over!</h2>
+        <button @click="restartGame">Restart</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    // Define the Solitaire game Vue.js app
+    new Vue({
+      el: '#app',
+      data: {
+        gameOver: false,
+        piles: [], // 2D array of cards
+        deck: [], // Array of cards
+      },
+      created() {
+        this.startGame();
+      },
+      methods: {
+        startGame() {
+          // Create a deck of cards
+          const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
+          const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+          this.deck = [];
+          for (const suit of suits) {
+            for (const rank of ranks) {
+              this.deck.push({ suit, rank, faceUp: false });
+            }
+          }
+
+          // Shuffle the deck
+          for (let i = this.deck.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [this.deck[i], this.deck[j]] = [this.deck[j], this.deck[i]];
+          }
+
+          // Distribute the cards to the piles
+          this.piles = [];
+          for (let i = 0; i < 7; i++) {
+            const pile = [];
+            for (let j = 0; j <= i; j++) {
+              const card = this.deck.pop();
+              card.faceUp = (j === i); // Only the last card in the pile is face-up
+              pile.push(card);
+            }
+            this.piles.push(pile);
+          }
+        },
+        handleCardClick(card, pileIndex) {
+          if (!card.faceUp) {
+            card.faceUp = true;
+          } else {
+            // Implement your game logic for moving cards here
+          }
+        },
+        getCardImage(card) {
+          return `https://your-image-service.com/${card.suit}_${card.rank}.png`; // Replace with your card image URL format
+        },
+        restartGame() {
+          this.startGame();
+          this.gameOver = false;
+        },
+      },
+    });
+  </script>
+</body>
+</html>
